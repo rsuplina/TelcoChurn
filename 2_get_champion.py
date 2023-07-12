@@ -8,8 +8,8 @@ dfExperiments=mlflow.search_runs(experiment_ids=experimentId)
 maxmetric=dfExperiments["metrics.precision"].max()
 runId=dfExperiments[dfExperiments["metrics.precision"]==maxmetric].head(1).run_id
 
-script_descriptor = open("2_trainStrategy_job.py")
+script_descriptor = open("1_trainStrategy_job.py")
 a_script = script_descriptor.read()
-sys.argv = ["2_trainStrategy_job.py", runId.item()]
+sys.argv = ["1_trainStrategy_job.py", runId.item()]
 
 exec(a_script)
