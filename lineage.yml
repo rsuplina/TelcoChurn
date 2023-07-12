@@ -1,0 +1,7 @@
+"ModelOpsChurn_acampos":
+              hive_table_qualified_names:                # this is a predefined key to link to training data
+                - "acampos.telco_data_curated@cm"               # the qualifiedName of the hive_table object representing                
+              metadata:                                  # this is a predefined key for additional metadata
+                query: "select * from historical_data"   # suggested use case: query used to extract training data
+                training_file: "3_trainStrategy_job.py"       # suggested use case: training file used
+            
