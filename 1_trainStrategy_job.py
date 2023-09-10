@@ -184,9 +184,6 @@ if len(sys.argv) == 2:
         default_engine_details = cml.get_default_engine({})
         default_engine_image_id = default_engine_details["id"]
 
-
-        print("Creating Model")
-
         example_model_input = {"streamingtv": "No", "monthlycharges": 70.35, "phoneservice": "No", "paperlessbilling": "No", "partner": "No", "onlinebackup": "No", "gender": "female", "contract": "Month-to-month", "totalcharges": 1397.475,
                        "streamingmovies": "No", "deviceprotection": "No", "paymentmethod": "Bank transfer (automatic)", "tenure": 29, "dependents": "No", "onlinesecurity": "No", "multiplelines": "No", "internetservice": "DSL", "seniorcitizen": "No", "techsupport": "No"}
 
@@ -295,53 +292,7 @@ if len(sys.argv) == 2:
             #close the file
             fin.close()                
 
-            create_model_params = {
-                "projectId": project_id,
-                "name": "ModelOpsChurn_"+DATABASE,
-                "description": "Explain a given model prediction",
-                "visibility": "private",
-                "enableAuth": False,
-                "targetFilePath": "_best_model_serve.py",
-                "targetFunctionName": "explain",
-                "engineImageId": default_engine_image_id,
-                "kernel": "python3",
-                "examples": [
-                    {
-                        "request": example_model_input,
-                        "response": {}
-                    }],
-                "cpuMillicores": 1000,
-                "memoryMb": 2048,
-                "nvidiaGPUs": 0,
-                "replicationPolicy": {"type": "fixed", "numReplicas": 1},
-                "environment": {},"runtimeId":int(id_rt)}
-            print("Creating new model")
-            new_model_details = cml.create_model(create_model_params)
-            access_key = new_model_details["accessKey"]  # todo check for bad response
-            model_id = new_model_details["id"]
-
-            print("New model created with access key", access_key)
-
-            # Disable model_authentication
-            cml.set_model_auth({"id": model_id, "enableAuth": False})
-            sys.argv=[]
-
-            # Wait for the model to deploy.
-            is_deployed = False
-            while is_deployed == False:
-                model = cml.get_model({"id": str(
-                    new_model_details["id"]), "latestModelDeployment": True, "latestModelBuild": True})
-                if model["latestModelDeployment"]["status"] == 'deployed':
-                    print("Model is deployed")
-                    break
-                else:
-                    print("Deploying Model.....")
-                    time.sleep(10)
-
-            #example_input_viz={"data": {"colnames": ["StreamingTV", "MonthlyCharges", "PhoneService", "PaperlessBilling","Partner", "OnlineBackup", "gender", "Contract", "TotalCharges","StreamingMovies", "DeviceProtection", "PaymentMethod", "tenure","Dependents", "OnlineSecurity", "MultipleLines", "InternetService","SeniorCitizen", "TechSupport"],"coltypes": ["STRING","FLOAT","STRING","STRING","STRING","STRING","STRING","STRING","FLOAT","STRING","STRING","STRING", "INT","STRING","STRING","STRING","STRING","STRING","STRING"],"rows": [["No", "70.35", "No", "No", "No", "No", "Female", "Month-to-month","1397.475", "No", "No", "Bank transfer (automatic)", "29", "No","No", "No", "DSL", "No", "No"],["No", "70.35", "No", "No", "No", "No", "Female", "Month-to-month","1397.475", "No", "No", "Bank transfer (automatic)", "29", "No","No", "No", "DSL", "No", "No"]]}}        
-            example_input_viz= {"data": {"colnames": ["monthlycharges", "totalcharges","tenure","gender","dependents", "onlinesecurity", "multiplelines", "internetservice","seniorcitizen", "techsupport", "contract","streamingmovies", "deviceprotection", "paymentmethod","streamingtv","phoneservice", "paperlessbilling","partner", "onlinebackup"],"coltypes": ["FLOAT", "FLOAT","INT","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING"],"rows": [["70.35", "70.35","29","Male","No","No", "No", "DSL", "No", "No", "Month-to-month", "No", "No", "Bank transfer (automatic)","No",  "No", "No", "No", "No"],["70.35", "70.35","29","Female","No","No", "No", "DSL", "No", "No", "Month-to-month", "No", "No", "Bank transfer (automatic)","No", "No", "No", "No", "No"]]}}
-
-                    
+            example_input_viz= {"data": {"colnames": ["monthlycharges", "totalcharges","tenure","gender","dependents", "onlinesecurity", "multiplelines", "internetservice","seniorcitizen", "techsupport", "contract","streamingmovies", "deviceprotection", "paymentmethod","streamingtv","phoneservice", "paperlessbilling","partner", "onlinebackup"],"coltypes": ["FLOAT", "FLOAT","INT","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING"],"rows": [["70.35", "70.35","29","Male","No","No", "No", "DSL", "No", "No", "Month-to-month", "No", "No", "Bank transfer (automatic)","No",  "No", "No", "No", "No"],["70.35", "70.35","29","Female","No","No", "No", "DSL", "No", "No", "Month-to-month", "No", "No", "Bank transfer (automatic)","No", "No", "No", "No", "No"]]}}                    
             create_model_params = {
                 "projectId": project_id,
                 "name": "ModelViz_"+DATABASE,
@@ -367,7 +318,8 @@ if len(sys.argv) == 2:
             access_key = new_model_details["accessKey"]  # todo check for bad response
             model_id = new_model_details["id"]
 
-            print("New model created with access key", access_key)
+            print("Workspace URL: % s/model" % HOST.strip().replace("https://", "https://modelservice."))    
+            print("Model Access key:", access_key)
 
             # Disable model_authentication
             cml.set_model_auth({"id": model_id, "enableAuth": False})
@@ -430,4 +382,4 @@ else:
 
           mlflow.end_run()
 
-    
+          
