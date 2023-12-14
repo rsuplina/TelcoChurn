@@ -38,6 +38,7 @@ else:
   #DATABASE = uservariables['username']
   DATABASE = 'acampos'
 
+DATABASE = 'acampos'
 
 runtimes=cml.get_runtimes()
 runtimes=runtimes['runtimes']
