@@ -38,8 +38,6 @@ else:
   #DATABASE = uservariables['username']
   DATABASE = 'acampos'
 
-DATABASE = 'acampos'
-
 runtimes=cml.get_runtimes()
 runtimes=runtimes['runtimes']
 runtimesdf = pd.DataFrame.from_dict(runtimes, orient='columns')
