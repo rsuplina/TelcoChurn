@@ -274,8 +274,7 @@ if len(sys.argv) == 2:
 
             with open('lineage.yml', 'w') as lineage:
                 lineage.write(yaml_text)
-                
-            
+
             #read input file
             fin = open("lineage.yml", "rt")
             #read file contents to string
@@ -291,7 +290,8 @@ if len(sys.argv) == 2:
             #close the file
             fin.close()                
 
-            example_input_viz= {"data": {"colnames": ["monthlycharges", "totalcharges","tenure","gender","dependents", "onlinesecurity", "multiplelines", "internetservice","seniorcitizen", "techsupport", "contract","streamingmovies", "deviceprotection", "paymentmethod","streamingtv","phoneservice", "paperlessbilling","partner", "onlinebackup"],"coltypes": ["FLOAT", "FLOAT","INT","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING"],"rows": [["70.35", "70.35","29","Male","No","No", "No", "DSL", "No", "No", "Month-to-month", "No", "No", "Bank transfer (automatic)","No",  "No", "No", "No", "No"],["70.35", "70.35","29","Female","No","No", "No", "DSL", "No", "No", "Month-to-month", "No", "No", "Bank transfer (automatic)","No", "No", "No", "No", "No"]]}}                    
+            example_input_viz= {"data": {"colnames": ["monthlycharges", "totalcharges","tenure","gender","dependents", "onlinesecurity", "multiplelines", "internetservice","seniorcitizen", "techsupport", "contract","streamingmovies", "deviceprotection", "paymentmethod","streamingtv","phoneservice", "paperlessbilling","partner", "onlinebackup"],"coltypes": ["FLOAT", "FLOAT","INT","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING","STRING"],"rows": [["70.35", "70.35","29","Male","No","No", "No", "DSL", "No", "No", "Month-to-month", "No", "No", "Bank transfer (automatic)","No",  "No", "No", "No", "No"],["70.35", "70.35","29","Female","No","No", "No", "DSL", "No", "No", "Month-to-month", "No", "No", "Bank transfer (automatic)","No", "No", "No", "No", "No"]]}}
+            
             create_model_params = {
                 "projectId": project_id,
                 "name": "ModelViz_"+DATABASE,
@@ -330,12 +330,55 @@ if len(sys.argv) == 2:
                 model = cml.get_model({"id": str(
                     new_model_details["id"]), "latestModelDeployment": True, "latestModelBuild": True})
                 if model["latestModelDeployment"]["status"] == 'deployed':
+                    print("ModelViz is deployed")
+                    break
+                else:
+                    print("Deploying ModelViz.....")
+                    time.sleep(10)
+
+
+            create_model_params = {
+                "projectId": project_id,
+                "name": "ModelOpsChurn_"+DATABASE,
+                "description": "Explain a given model prediction",
+                "visibility": "private",
+                "enableAuth": False,
+                "targetFilePath": "_best_model_serve.py",
+                "targetFunctionName": "explain",
+                "engineImageId": default_engine_image_id,
+                "kernel": "python3",
+                "examples": [
+                    {
+                        "request": example_model_input,
+                        "response": {}
+                    }],
+                "cpuMillicores": 1000,
+                "memoryMb": 2048,
+                "nvidiaGPUs": 0,
+                "replicationPolicy": {"type": "fixed", "numReplicas": 1},
+                "environment": {},"runtimeId":int(id_rt)}
+            print("Creating new model")
+            new_model_details = cml.create_model(create_model_params)
+            access_key = new_model_details["accessKey"]  # todo check for bad response
+            model_id = new_model_details["id"]
+
+            print("New model created with access key", access_key)
+
+            # Disable model_authentication
+            cml.set_model_auth({"id": model_id, "enableAuth": False})
+            sys.argv=[]
+
+            # Wait for the model to deploy.
+            is_deployed = False
+            while is_deployed == False:
+                model = cml.get_model({"id": str(
+                    new_model_details["id"]), "latestModelDeployment": True, "latestModelBuild": True})
+                if model["latestModelDeployment"]["status"] == 'deployed':
                     print("Model is deployed")
                     break
                 else:
-                    print("Deploying Model.....")
+                    print("Deploying ModelOps.....")
                     time.sleep(10)
-
 
     except:
         sys.exit("Invalid Arguments passed to Experiment")
