@@ -317,7 +317,7 @@ if len(sys.argv) == 2:
             model_id = new_model_details["id"]
 
             print("Workspace URL: % s/model" % HOST.strip().replace("https://", "https://modelservice."))    
-            print("ModelViz Access key:", access_key)
+            print("ModelViz Access Key:", access_key)
 
             # Disable model_authentication
             cml.set_model_auth({"id": model_id, "enableAuth": False})
@@ -363,7 +363,7 @@ if len(sys.argv) == 2:
             access_key = new_model_details["accessKey"]  # todo check for bad response
             model_id = new_model_details["id"]
 
-            print("ModelOps Access key", access_key)
+            print("ModelOps Access Key:", access_key)
 
             # Disable model_authentication
             cml.set_model_auth({"id": model_id, "enableAuth": False})
