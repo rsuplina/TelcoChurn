@@ -156,7 +156,6 @@ ce = CategoricalEncoder()
 X = ce.fit_transform(data)
 
 y=labels.values
-print("Starting Experiments")
 
 run_time_suffix = datetime.datetime.now()
 run_time_suffix = run_time_suffix.strftime("%M%S")
@@ -318,7 +317,7 @@ if len(sys.argv) == 2:
             model_id = new_model_details["id"]
 
             print("Workspace URL: % s/model" % HOST.strip().replace("https://", "https://modelservice."))    
-            print("Model Access key:", access_key)
+            print("ModelViz Access key:", access_key)
 
             # Disable model_authentication
             cml.set_model_auth({"id": model_id, "enableAuth": False})
@@ -357,12 +356,14 @@ if len(sys.argv) == 2:
                 "nvidiaGPUs": 0,
                 "replicationPolicy": {"type": "fixed", "numReplicas": 1},
                 "environment": {},"runtimeId":int(id_rt)}
+            
             print("Creating new model")
+            
             new_model_details = cml.create_model(create_model_params)
             access_key = new_model_details["accessKey"]  # todo check for bad response
             model_id = new_model_details["id"]
 
-            print("New model created with access key", access_key)
+            print("ModelOps Access key", access_key)
 
             # Disable model_authentication
             cml.set_model_auth({"id": model_id, "enableAuth": False})
