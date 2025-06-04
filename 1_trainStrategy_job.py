@@ -35,8 +35,8 @@ uservariables=cml.get_user()
 if uservariables['username'][-3] == '0':
   DATABASE = "user"+uservariables['username'][-3:]
 else:
-  #DATABASE = uservariables['username']
-  DATABASE = 'acampos'
+  DATABASE = uservariables['username']
+  #DATABASE = 'acampos'
 
 runtimes=cml.get_runtimes()
 runtimes=runtimes['runtimes']
